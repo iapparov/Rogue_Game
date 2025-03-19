@@ -1,14 +1,12 @@
 package presentation
 
 import (
-	"github.com/rthornton128/goncurses"
 	"rogue/domain"
 )
 
 // HandleInput обрабатывает нажатия клавиш
-func HandleInput(player *domain.Character, level *domain.Level) {
-	for {
-		ch := goncurses.StdScr().GetChar()
+func HandleInput(r *Renderer, session *domain.GameSession, player *domain.Character, level *domain.Level) {
+		ch := r.window.GetChar()
 
 		switch ch {
 		case 'w':
@@ -20,7 +18,6 @@ func HandleInput(player *domain.Character, level *domain.Level) {
 		case 'd':
 			player.Move(1, 0, level)
 		case 'q':
-			return // Выход из игры
+			session.EndGame()
 		}
-	}
 }

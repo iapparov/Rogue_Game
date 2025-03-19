@@ -22,9 +22,15 @@ func main() {
 		renderer.Render(session, session.Levels[session.CurrentLevel], session.Player, fog)
 
 		// Обрабатываем ввод
-		presentation.HandleInput(session.Player, session.Levels[session.CurrentLevel])
+		presentation.HandleInput(renderer, session, session.Player, session.Levels[session.CurrentLevel])
 
 		// Задержка для плавности
 		time.Sleep(50 * time.Millisecond)
+
+		if session.GameOver {
+			renderer.GameOver()
+			break
+		}
+		
 	}
 }

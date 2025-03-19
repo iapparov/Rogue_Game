@@ -84,3 +84,7 @@ func (r *Renderer) Render(session *domain.GameSession, level *domain.Level, play
 	// Обновляем экран
 	r.window.Refresh()
 }
+
+func (r *Renderer) GameOver(){
+	goncurses.End()
+}

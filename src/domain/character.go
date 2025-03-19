@@ -32,7 +32,34 @@ func (c *Character) PickUpItem(item *Item) {
 	}
 }
 
-func (c *Character) Move(X int, Y int, level *Level){
-	c.X+=X
-	c.Y+=Y
+func (c *Character) Move(dx, dy int, level *Level) {
+	newX, newY := c.X+dx, c.Y+dy
+
+	// Проверяем, находится ли новая позиция в комнате или коридоре
+	if isWalkable(newX, newY, level) {
+		c.X = newX
+		c.Y = newY
+	}
+}
+
+// Функция проверяет, можно ли пройти в указанную клетку
+func isWalkable(x, y int, level *Level) bool {
+	// Проверяем, находится ли в комнате
+	for _, room := range level.Rooms {
+		if x >= room.X && x < room.X+room.Width &&
+			y >= room.Y && y < room.Y+room.Height {
+			return true
+		}
+	}
+
+	// Проверяем, находится ли в коридоре
+	for _, corridor := range level.Corridors {
+		for _, point := range corridor.Path {
+			if point.X == x && point.Y == y {
+				return true
+			}
+		}
+	}
+
+	return false
 }
