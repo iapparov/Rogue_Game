@@ -140,36 +140,83 @@ func findClosestRoom(current *Room, unvisited map[*Room]bool) (*Room, *Corridor)
 	return closestRoom, bestCorridor
 }
 
-// Создаёт коридор между двумя комнатами
 func buildCorridor(r1, r2 *Room) *Corridor {
 	path := []Point{}
 
-	// Горизонтальное перемещение
+	// Центры комнат
 	x1, y1 := r1.X+r1.Width/2, r1.Y+r1.Height/2
 	x2, y2 := r2.X+r2.Width/2, r2.Y+r2.Height/2
 
-	if x1 < x2 {
-		for x := x1; x <= x2; x++ {
-			path = append(path, Point{X: x, Y: y1})
-		}
-	} else {
-		for x := x1; x >= x2; x-- {
-			path = append(path, Point{X: x, Y: y1})
-		}
-	}
+	// Определяем границы комнат (стены, где коридор может "остановиться")
+	left1, right1 := r1.X, r1.X+r1.Width-1
+	top1, bottom1 := r1.Y, r1.Y+r1.Height-1
 
-	// Вертикальное перемещение
-	if y1 < y2 {
-		for y := y1; y <= y2; y++ {
-			path = append(path, Point{X: x2, Y: y})
+	left2, right2 := r2.X, r2.X+r2.Width-1
+	top2, bottom2 := r2.Y, r2.Y+r2.Height-1
+
+	// Находим ближайшие точки входа на границе комнат
+	exitX1, exitY1 := closestBoundary(x1, y1, left1, right1, top1, bottom1, x2, y2)
+	exitX2, exitY2 := closestBoundary(x2, y2, left2, right2, top2, bottom2, exitX1, exitY1)
+
+	// Горизонтально -> Вертикально
+	if rand.Intn(2) == 0 {
+		for x := min(exitX1, exitX2); x <= max(exitX1, exitX2); x++ {
+			path = append(path, Point{X: x, Y: exitY1})
+		}
+		for y := min(exitY1, exitY2); y <= max(exitY1, exitY2); y++ {
+			path = append(path, Point{X: exitX2, Y: y})
 		}
 	} else {
-		for y := y1; y >= y2; y-- {
-			path = append(path, Point{X: x2, Y: y})
+		// Вертикально -> Горизонтально
+		for y := min(exitY1, exitY2); y <= max(exitY1, exitY2); y++ {
+			path = append(path, Point{X: exitX1, Y: y})
+		}
+		for x := min(exitX1, exitX2); x <= max(exitX1, exitX2); x++ {
+			path = append(path, Point{X: x, Y: exitY2})
 		}
 	}
 
 	return &Corridor{Path: path}
+}
+
+// Вычисляет ближайшую точку на границе комнаты
+func closestBoundary(cx, cy, left, right, top, bottom, targetX, targetY int) (int, int) {
+	var bx, by int
+
+	// Если цель справа, берём правый край
+	if targetX > right {
+		bx = right + 1
+	} else if targetX < left { // Если слева, берём левый край
+		bx = left - 1
+	} else { // Если по горизонтали совпадает, оставляем как есть
+		bx = cx
+	}
+
+	// Если цель снизу, берём нижний край
+	if targetY > bottom {
+		by = bottom + 1
+	} else if targetY < top { // Если сверху, берём верхний край
+		by = top - 1
+	} else { // Если по вертикали совпадает, оставляем как есть
+		by = cy
+	}
+
+	return bx, by
+}
+
+// Вспомогательные функции
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+}
+
+func max(a, b int) int {
+	if a > b {
+		return a
+	}
+	return b
 }
 
 // Вспомогательная функция для вычисления абсолютного значения

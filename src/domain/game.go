@@ -25,8 +25,8 @@ func NewGameSession() *GameSession {
 		session.Levels[i] = GenerateLevel(i + 1)
 	}
 
-	session.Player.X = session.Levels[0].StartRoom.X
-	session.Player.Y = session.Levels[0].StartRoom.Y
+	session.Player.X = session.Levels[0].StartRoom.X+1
+	session.Player.Y = session.Levels[0].StartRoom.Y+1
 
 	return session
 }
@@ -36,8 +36,8 @@ func (g *GameSession) NextLevel() {
 	if g.CurrentLevel < 21 {
 		g.CurrentLevel++
 	}
-	g.Player.X = g.Levels[g.CurrentLevel-1].StartRoom.X
-	g.Player.Y = g.Levels[g.CurrentLevel-1].StartRoom.Y
+	g.Player.X = g.Levels[g.CurrentLevel-1].StartRoom.X+1
+	g.Player.Y = g.Levels[g.CurrentLevel-1].StartRoom.Y+1
 }
 
 // EndGame завершает игру
