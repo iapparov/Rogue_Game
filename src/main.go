@@ -16,7 +16,7 @@ func main() {
 	// Основной игровой цикл
 	for {
 		// Рассчитываем туман войны
-		fog := presentation.ComputeFogOfWar(session.Player, session.Levels[session.CurrentLevel])
+		fog := presentation.ComputeFogOfWar(session.Player, session.Levels[session.CurrentLevel], &session.Levels[session.CurrentLevel].Fog_corr)
 
 		// Рендерим сцену
 		renderer.Render(session, session.Levels[session.CurrentLevel], session.Player, fog)

@@ -38,18 +38,7 @@ func NewRenderer() *Renderer {
 func (r *Renderer) Render(session *domain.GameSession, level *domain.Level, player *domain.Character, fogOfWar map[domain.Point]bool) {
 	r.window.Clear()
 
-	// Отрисовываем стены, пол и коридоры
-	for _, room := range level.Rooms {
-		for y := room.Y; y < room.Y+room.Height; y++ {
-			for x := room.X; x < room.X+room.Width; x++ {
-				if fogOfWar[domain.Point{X: x, Y: y}] {
-					r.window.MovePrint(y, x, string(UnknownChar))
-				} else {
-					r.window.MovePrint(y, x, string(FloorChar))
-				}
-			}
-		}
-	}
+
 
 	// Отрисовываем коридоры
 	for _, corridor := range level.Corridors {
@@ -62,6 +51,19 @@ func (r *Renderer) Render(session *domain.GameSession, level *domain.Level, play
 		}
 	}
 
+		// Отрисовываем стены, пол и коридоры
+	for _, room := range level.Rooms {
+		for y := room.Y; y < room.Y+room.Height; y++ {
+			for x := room.X; x < room.X+room.Width; x++ {
+				if fogOfWar[domain.Point{X: x, Y: y}] {
+					r.window.MovePrint(y, x, string(UnknownChar))
+				} else {
+					r.window.MovePrint(y, x, string(FloorChar))
+				}
+			}
+		}
+	}
+	
 	// Отрисовываем персонажа
 	r.window.MovePrint(player.Y, player.X, string(PlayerChar))
 

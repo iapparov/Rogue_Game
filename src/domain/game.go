@@ -15,7 +15,7 @@ type GameSession struct {
 func NewGameSession() *GameSession {
 	player := NewCharacter("Hero", 100, 10, 5, 0, 0)
 	session := &GameSession{
-		CurrentLevel: 1,
+		CurrentLevel: 0,
 		Player:       player,
 		Levels:       make([]*Level, 21),
 	}
@@ -25,8 +25,8 @@ func NewGameSession() *GameSession {
 		session.Levels[i] = GenerateLevel(i + 1)
 	}
 
-	session.Player.X = session.Levels[0].StartRoom.X+1
-	session.Player.Y = session.Levels[0].StartRoom.Y+1
+	session.Player.X = session.Levels[0].StartRoom.X
+	session.Player.Y = session.Levels[0].StartRoom.Y
 
 	return session
 }
