@@ -6,7 +6,7 @@
 #include <stdbool.h>
 #include <ncurses.h>
 #include "entities.h"
-#include "statistics.h"
+#include "../datalayer/statistics.h"
 #include "entities_consts.h"
 #include "characters_movement.h"
 #include "presentation_consts.h"

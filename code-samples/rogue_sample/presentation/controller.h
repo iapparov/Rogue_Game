@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <stddef.h>
 #include <string.h>
-#include <ncursesw/ncurses.h>
+#include <ncurses.h>
 #include "presentation.h"
 #include "data_actions.h"
 #include "statistics.h"
