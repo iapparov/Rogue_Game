@@ -14,6 +14,7 @@ const (
 	EnemyChar     = 'E'
 	ItemChar      = '*'
 	UnknownChar   = ' ' // Туман войны
+	DoorChar = 'D'
 )
 
 // Renderer отвечает за отрисовку игрового мира
@@ -51,18 +52,35 @@ func (r *Renderer) Render(session *domain.GameSession, level *domain.Level, play
 		}
 	}
 
-		// Отрисовываем стены, пол и коридоры
+	// Отрисовываем стены
 	for _, room := range level.Rooms {
-		for y := room.Y; y < room.Y+room.Height; y++ {
-			for x := room.X; x < room.X+room.Width; x++ {
+		for _, wall := range room.Walls {
+			if fogOfWar[wall] {
+				r.window.MovePrint(wall.Y, wall.X, string(UnknownChar))
+			} else {
+				r.window.MovePrint(wall.Y, wall.X, string(WallChar))
+			}
+		}
+	}
+
+	// Отрисовываем пол
+	for _, room := range level.Rooms {
+		for y := room.Y + 1; y < room.Y+room.Height-1; y++ {
+			for x := room.X + 1; x < room.X+room.Width-1; x++ {
 				if fogOfWar[domain.Point{X: x, Y: y}] {
 					r.window.MovePrint(y, x, string(UnknownChar))
 				} else {
 					r.window.MovePrint(y, x, string(FloorChar))
+					if room == level.EndRoom{
+						r.window.MovePrint(level.EndRoom.DoorY, level.EndRoom.DoorX, string(DoorChar))
+					}
 				}
 			}
 		}
 	}
+
+
+
 	
 	// Отрисовываем персонажа
 	r.window.MovePrint(player.Y, player.X, string(PlayerChar))

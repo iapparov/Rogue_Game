@@ -32,6 +32,13 @@ func (c *Character) PickUpItem(item *Item) {
 	}
 }
 
+func (c *Character) NextLevel(level *Level) bool{
+	if c.X == level.EndRoom.DoorX && c.Y == level.EndRoom.DoorY{
+		return true
+	}
+	return false
+}
+
 func (c *Character) Move(dx, dy int, level *Level) {
 	newX, newY := c.X+dx, c.Y+dy
 
@@ -46,8 +53,8 @@ func (c *Character) Move(dx, dy int, level *Level) {
 func isWalkable(x, y int, level *Level) bool {
 	// Проверяем, находится ли в комнате
 	for _, room := range level.Rooms {
-		if x >= room.X && x < room.X+room.Width &&
-			y >= room.Y && y < room.Y+room.Height {
+		if x > room.X && x < room.X+room.Width-1 &&
+			y > room.Y && y < room.Y+room.Height-1 {
 			return true
 		}
 	}

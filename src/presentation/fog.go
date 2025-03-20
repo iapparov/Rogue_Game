@@ -25,6 +25,8 @@ func ComputeFogOfWar(player *domain.Character, level *domain.Level, fog_corr *ma
 		}
 	}
 
+
+
 	for _, room := range level.Rooms {
 		if player.X >= room.X && player.X < room.X+room.Width &&
 			player.Y >= room.Y && player.Y < room.Y+room.Height {
@@ -42,6 +44,22 @@ func ComputeFogOfWar(player *domain.Character, level *domain.Level, fog_corr *ma
 			if math.Abs(float64(player.X-point.X)) < 3 && math.Abs(float64(player.Y-point.Y)) < 3 {
 				fog[point] = false
 				(*fog_corr)[domain.Point{X: point.X, Y: point.Y}] = true
+			}
+		}
+	}
+
+	for _, room := range level.Rooms {
+		for _, wall := range room.Walls {
+			if !fog[wall]{
+				(*fog_corr)[domain.Point{X: wall.X, Y: wall.Y}] = true
+			}
+		}
+	}
+
+	for _, room := range level.Rooms {
+		for _, wall := range room.Walls {
+			if (*fog_corr)[domain.Point{X: wall.X, Y: wall.Y}]{
+				fog[wall] = false
 			}
 		}
 	}

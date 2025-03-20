@@ -35,3 +35,4 @@ func (c *Character) UseItem(item *Item) {
 		c.Weapon = item
 	}
 }
+

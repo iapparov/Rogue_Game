@@ -18,7 +18,7 @@ type Level struct {
 	Corridors []*Corridor
 	StartRoom *Room
 	EndRoom   *Room
-	Fog_corr map[Point]bool
+	Fog_corr  map[Point]bool
 }
 
 // Room представляет комнату
@@ -26,7 +26,9 @@ type Room struct {
 	X, Y      int // Верхний левый угол
 	Width     int
 	Height    int
-	Connected []*Room // Связанные комнаты
+	Walls     []Point   // Координаты стен комнаты
+	Connected []*Room   // Связанные комнаты
+	DoorX, DoorY int
 }
 
 // Corridor соединяет две комнаты
@@ -48,6 +50,7 @@ func GenerateLevel(depth int) *Level {
 	// 1. Генерируем комнаты в секциях
 	for _, section := range sections {
 		room := generateRoom(section)
+		room.Walls = generateWalls(room) // Генерация стен
 		level.Rooms = append(level.Rooms, room)
 	}
 
@@ -60,6 +63,10 @@ func GenerateLevel(depth int) *Level {
 	for level.StartRoom == level.EndRoom { // Гарантируем разные комнаты
 		level.EndRoom = level.Rooms[rand.Intn(len(level.Rooms))]
 	}
+
+	// 4. Создаем дверь для перехода на следующий уровень
+	level.EndRoom.DoorX = level.EndRoom.X+1
+	level.EndRoom.DoorY = level.EndRoom.Y+1
 
 	return level
 }
@@ -91,6 +98,25 @@ func generateRoom(section Room) *Room {
 	y := section.Y + rand.Intn(section.Height-h)
 
 	return &Room{X: x, Y: y, Width: w, Height: h}
+}
+
+// Генерирует стены вокруг комнаты
+func generateWalls(room *Room) []Point {
+	walls := []Point{}
+
+	// Верхняя и нижняя стенки
+	for x := room.X; x < room.X+room.Width; x++ {
+		walls = append(walls, Point{X: x, Y: room.Y})                     // Верхняя стена
+		walls = append(walls, Point{X: x, Y: room.Y + room.Height - 1}) // Нижняя стена
+	}
+
+	// Левая и правая стенки
+	for y := room.Y; y < room.Y+room.Height; y++ {
+		walls = append(walls, Point{X: room.X, Y: y})                     // Левая стена
+		walls = append(walls, Point{X: room.X + room.Width - 1, Y: y}) // Правая стена
+	}
+
+	return walls
 }
 
 // Соединяет комнаты коридорами (алгоритм MST - Минимальное остовное дерево)
