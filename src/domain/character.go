@@ -1,5 +1,7 @@
 package domain
 
+import "strconv"
+
 type Character struct{
 	Name string
 	X, Y int
@@ -26,10 +28,67 @@ func NewCharacter(name string, health, agility, strength, X, Y int) *Character {
 }
 
 // PickUpItem добавляет предмет в рюкзак
-func (c *Character) PickUpItem(item *Item) {
-	if len(c.Backpack) < 9 {
-		c.Backpack = append(c.Backpack, item)
+func (c *Character) PickUpItem(level *Level) (int, ItemType){
+
+	for i :=0; i< len(level.Items); i++{
+		if level.Items[i].X == c.X && level.Items[i].Y == c.Y{
+			if len(c.Backpack) < 9 {
+				c.Backpack = append(c.Backpack, level.Items[i])
+				level.Items[i].X = -1
+				level.Items[i].Y = -1
+				return 1, level.Items[i].Type
+			} else {
+				return 0, level.Items[i].Type
+			}
+		}
 	}
+	return -1, ""
+
+}
+
+func (c *Character) UseH(firstch, ch string) int{
+	numb, err := strconv.Atoi(ch)
+
+	// Проверяем, существует ли элемент в рюкзаке
+	if numb <= 0 || numb > len(c.Backpack) || err != nil{
+		return -2 // Неверный индекс
+	} else {
+		switch firstch{
+		case "h":
+			if c.Backpack[numb-1].Type != Weapon{
+				return -2
+			}		 else {
+				c.UseItem(c.Backpack[numb-1])
+				c.Backpack = append(c.Backpack[:numb-1], c.Backpack[numb:]...)
+				return 200
+			}
+		case "j":
+			if c.Backpack[numb-1].Type != Food{
+				return -2
+			}	else {
+				c.UseItem(c.Backpack[numb-1])
+				c.Backpack = append(c.Backpack[:numb-1], c.Backpack[numb:]...)
+				return 200
+			}
+		case "k":
+			if c.Backpack[numb-1].Type != Potion{
+				return -2
+			}	else {
+				c.UseItem(c.Backpack[numb-1])
+				c.Backpack = append(c.Backpack[:numb-1], c.Backpack[numb:]...)
+				return 200
+			}
+		case "e":
+			if c.Backpack[numb-1].Type != Scroll{
+				return -2
+			}	else {
+				c.UseItem(c.Backpack[numb-1])
+				c.Backpack = append(c.Backpack[:numb-1], c.Backpack[numb:]...)
+				return 200
+			}
+		}
+	}
+	return -2
 }
 
 func (c *Character) NextLevel(level *Level) bool{
@@ -39,7 +98,7 @@ func (c *Character) NextLevel(level *Level) bool{
 	return false
 }
 
-func (c *Character) Move(dx, dy int, level *Level) {
+func (c *Character) Move(dx, dy int, level *Level){
 	newX, newY := c.X+dx, c.Y+dy
 
 	// Проверяем, находится ли новая позиция в комнате или коридоре

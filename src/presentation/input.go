@@ -13,14 +13,31 @@ func HandleInput(r *Renderer, session *domain.GameSession, player *domain.Charac
 		switch ch {
 		case 'w', 'ц':
 			player.Move(0, -1, level)
+			flg, msg := player.PickUpItem(level)
+			r.TakeSomething(flg, msg)
+			r.backpack = false
 		case 's', 'ы':
 			player.Move(0, 1, level)
+			flg, msg := player.PickUpItem(level)
+			r.TakeSomething(flg, msg)
+			r.backpack = false
 		case 'a', 'ф':
 			player.Move(-1, 0, level)
+			flg, msg := player.PickUpItem(level)
+			r.TakeSomething(flg, msg)
+			r.backpack = false
 		case 'd', 'в':
 			player.Move(1, 0, level)
+			flg, msg := player.PickUpItem(level)
+			r.TakeSomething(flg, msg)
+			r.backpack = false
 		case 'q', 'й':
 			session.EndGame()
+		case 'h', 'j', 'k', 'e': //оружие
+			r.backpack = true
+			r.BackPack(player)
+			flg := player.UseH(string(rune(ch)), string(rune(r.window.GetChar())))  // Передаем символ в функцию
+			r.TakeSomething(flg, "Can't use it")
 		case goncurses.KEY_ENTER, '\n':
 			if player.NextLevel(level){
 				session.NextLevel()

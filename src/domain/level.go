@@ -15,6 +15,7 @@ const (
 // Level представляет уровень игры
 type Level struct {
 	Rooms     []*Room
+	Items []*Item
 	Corridors []*Corridor
 	StartRoom *Room
 	EndRoom   *Room
@@ -67,6 +68,10 @@ func GenerateLevel(depth int) *Level {
 	// 4. Создаем дверь для перехода на следующий уровень
 	level.EndRoom.DoorX = level.EndRoom.X+1
 	level.EndRoom.DoorY = level.EndRoom.Y+1
+
+	// 5. Генерируем предметы в каждой комнате 
+	level.Items = GenerateItem(level, depth)
+	
 
 	return level
 }

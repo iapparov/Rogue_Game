@@ -20,6 +20,8 @@ const (
 // Renderer отвечает за отрисовку игрового мира
 type Renderer struct {
 	window *goncurses.Window
+	messages []string // Буфер сообщений
+	backpack bool
 }
 
 // NewRenderer создаёт новый рендерер
@@ -38,8 +40,6 @@ func NewRenderer() *Renderer {
 // Render отрисовывает уровень
 func (r *Renderer) Render(session *domain.GameSession, level *domain.Level, player *domain.Character, fogOfWar map[domain.Point]bool) {
 	r.window.Clear()
-
-
 
 	// Отрисовываем коридоры
 	for _, corridor := range level.Corridors {
@@ -93,13 +93,31 @@ func (r *Renderer) Render(session *domain.GameSession, level *domain.Level, play
 	// 	r.window.MovePrint(enemy.Y, enemy.X, string(EnemyChar))
 	// }
 
-	// // Отрисовываем предметы
-	// for _, item := range level.Items {
-	// 	if fogOfWar[domain.Point{X: item.X, Y: item.Y}] {
-	// 		continue
-	// 	}
-	// 	r.window.MovePrint(item.Y, item.X, string(ItemChar))
-	// }
+	// Отрисовываем предметы
+	for _, item := range level.Items {
+		if fogOfWar[domain.Point{X: item.X, Y: item.Y}] {
+			continue
+		}
+		r.window.MovePrint(item.Y, item.X, string(ItemChar))
+	}
+
+	// Прописываем статы
+
+	r.window.MovePrint(30,0, "MaxHealth: ", player.MaxHealth)
+	r.window.MovePrint(31,0, "Health: ", player.Health)
+	r.window.MovePrint(32,0, "Agility: ", player.Agility)
+	r.window.MovePrint(33,0, "Strength: ", player.Strength)
+
+
+	// Вывод последних сообщений
+	startY := 35
+	for i, msg := range r.messages {
+		r.window.MovePrint(startY+i, 0, msg)
+	}
+
+	if r.backpack {
+		r.BackPack(player)
+	}
 
 	// Обновляем экран
 	r.window.Refresh()
@@ -107,4 +125,34 @@ func (r *Renderer) Render(session *domain.GameSession, level *domain.Level, play
 
 func (r *Renderer) GameOver(){
 	goncurses.End()
+}
+
+// AddMessage добавляет новое сообщение в буфер
+func (r *Renderer) AddMessage(msg string) {
+	// Ограничиваем количество сообщений (например, 3)
+	if len(r.messages) >= 3 {
+		r.messages = r.messages[1:] // Удаляем самое старое сообщение
+	}
+	r.messages = append(r.messages, msg)
+}
+
+func (r *Renderer) TakeSomething(flag int, message domain.ItemType) {
+	var msg string
+	switch flag {
+	case 1:
+		msg = string(message) + " now in backpack"
+		r.AddMessage(msg)
+	case 0:
+		msg = "Backpack is full. Can't take " + string(message)
+		r.AddMessage(msg)
+	case -2:
+		r.AddMessage(msg)
+	}
+}
+
+func (r *Renderer) BackPack(player *domain.Character){
+	backpack := player.Backpack
+	for i, item := range backpack{
+		r.window.MovePrint(0+i, 50, (i+1), ") ", item.Subtype, "(", "Ag +", item.Agility, " He+", item.Health, " MaxHe+", item.MaxHealth, " Str+", item.Strength, ")")
+	}
 }
