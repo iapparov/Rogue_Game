@@ -1,6 +1,7 @@
 package domain
 
 type EnemyType string
+
 const (
 	Zombie    EnemyType = "Zombie"
 	Vampire   EnemyType = "Vampire"
@@ -9,12 +10,11 @@ const (
 	SnakeMage EnemyType = "SnakeMage"
 )
 
-
-type Enemy struct{
+type Enemy struct {
 	Character
-	Type EnemyType
+	Type      EnemyType
 	Hostility int //враждебность
-	X, Y int
+	X, Y      int
 }
 
 // NewEnemy создаёт нового врага
@@ -26,7 +26,7 @@ func NewEnemy(enemyType EnemyType) *Enemy {
 			Name:      string(enemyType),
 			Health:    health,
 			MaxHealth: health,
-			Agility: agility,
+			Agility:   agility,
 			Strength:  strength,
 		},
 		Type:      enemyType,
@@ -52,3 +52,22 @@ func getEnemyStats(enemyType EnemyType) (int, int, int, int) {
 	}
 }
 
+// enemy.go
+func (e *Enemy) DropTreasure() *Item {
+	var cost int
+	switch e.Type {
+	case Zombie:
+		cost = 10
+	case Vampire:
+		cost = 25
+	case Ghost:
+		cost = 15
+	case Ogre:
+		cost = 30
+	case SnakeMage:
+		cost = 50
+	default:
+		cost = 5
+	}
+	return NewItem(Treasure, "Treasure", 0, 0, 0, 0, cost, e.X, e.Y)
+}

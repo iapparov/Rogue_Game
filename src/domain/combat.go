@@ -14,7 +14,13 @@ func (c *Character) Attack(target *Character) bool {
 
 // calculateHitChance рассчитывает вероятность попадания
 func calculateHitChance(attacker, defender *Character) float64 {
-	return 0.5 + float64(attacker.Agility-defender.Agility)*0.05
+	chance := 0.7 + float64(attacker.Agility-defender.Agility)*0.05
+	if chance > 0.95 {
+		return 0.95
+	} else if chance < 0.1 {
+		return 0.1
+	}
+	return chance
 }
 
 // calculateDamage рассчитывает урон

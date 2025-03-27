@@ -83,13 +83,13 @@ func (r *Renderer) Render(session *domain.GameSession, level *domain.Level, play
 	// Отрисовываем персонажа
 	r.window.MovePrint(player.Y, player.X, string(PlayerChar))
 
-	// // Отрисовываем противников
-	// for _, enemy := range level.Enemies {
-	// 	if fogOfWar[domain.Point{X: enemy.X, Y: enemy.Y}] {
-	// 		continue
-	// 	}
-	// 	r.window.MovePrint(enemy.Y, enemy.X, string(EnemyChar))
-	// }
+	// Отрисовываем противников
+	for _, enemy := range level.Enemies {
+		if fogOfWar[domain.Point{X: enemy.X, Y: enemy.Y}] {
+			continue
+		}
+		r.window.MovePrint(enemy.Y, enemy.X, string(EnemyChar))
+	}
 
 	// Отрисовываем предметы
 	for _, item := range level.Items {
@@ -105,10 +105,11 @@ func (r *Renderer) Render(session *domain.GameSession, level *domain.Level, play
 	r.window.MovePrint(31, 0, "Health: ", player.Health)
 	r.window.MovePrint(32, 0, "Agility: ", player.Agility)
 	r.window.MovePrint(33, 0, "Strength: ", player.Strength)
-	r.window.MovePrint(34, 0, "Curren Level: ", session.CurrentLevel+1)
+	r.window.MovePrint(34, 0, "Current Level: ", session.CurrentLevel+1)
+	r.window.MovePrint(35, 0, "Treasure: ", player.TreasureCount)
 
 	// Вывод последних сообщений
-	startY := 35
+	startY := 36
 	for i, msg := range r.messages {
 		r.window.MovePrint(startY+i, 0, msg)
 	}
@@ -139,6 +140,9 @@ func (r *Renderer) TakeSomething(flag int, message domain.ItemType) {
 	switch flag {
 	case 1:
 		msg = string(message) + " now in backpack"
+		r.AddMessage(msg)
+	case 2:
+		msg = "Found treasure!"
 		r.AddMessage(msg)
 	case 0:
 		msg = "Backpack is full. Can't take " + string(message)
