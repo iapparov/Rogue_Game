@@ -10,6 +10,7 @@ type Character struct{
 	Agility int
 	Strength int
 	Weapon *Item
+	Weapon_hand bool
 	Backpack []*Item
 }
 
@@ -24,6 +25,7 @@ func NewCharacter(name string, health, agility, strength, X, Y int) *Character {
 		Agility: agility,
 		Strength:  strength,
 		Backpack:  []*Item{},
+		Weapon_hand: false,
 	}
 }
 
@@ -46,7 +48,7 @@ func (c *Character) PickUpItem(level *Level) (int, ItemType){
 
 }
 
-func (c *Character) UseH(firstch, ch string) int{
+func (c *Character) UseH(firstch, ch string, level *Level) int{
 	numb, err := strconv.Atoi(ch)
 
 	// Проверяем, существует ли элемент в рюкзаке
@@ -58,6 +60,11 @@ func (c *Character) UseH(firstch, ch string) int{
 			if c.Backpack[numb-1].Type != Weapon{
 				return -2
 			}		 else {
+				if c.Weapon_hand{
+					level.Items = append(level.Items, c.Backpack[numb-1])
+					level.Items[len(level.Items)-1].X = c.X
+					level.Items[len(level.Items)-1].Y = c.Y+1
+				}
 				c.UseItem(c.Backpack[numb-1])
 				c.Backpack = append(c.Backpack[:numb-1], c.Backpack[numb:]...)
 				return 200

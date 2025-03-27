@@ -5,8 +5,6 @@ type GameSession struct {
 	CurrentLevel  int
 	Player        *Character
 	Levels        []*Level
-	// Items 		[]*Item
-	// Enemies		[]*Enemy
 	GameOver      bool
 	TreasureCount int
 }

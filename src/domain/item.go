@@ -2,6 +2,7 @@ package domain
 
 import(
 	"math/rand"
+	"time"
 )
 /*  + сокровища (имеют стоимость, накапливаются и влияют на итоговый рейтинг, можно получить только при победе над монстром);
   + еда (восстанавливает здоровье на некоторую величину);
@@ -41,15 +42,40 @@ func (c *Character) UseItem(item *Item) {
 		c.Agility += item.Agility
 		c.Strength += item.Strength
 		c.MaxHealth += item.MaxHealth
+		if item.MaxHealth >0 {
+			c.Health += item.MaxHealth
+		}
+
+		go c.RemovePotion(item)
 	case Scroll:
 		c.Strength += item.Strength
 		c.Agility += item.Agility
 		c.MaxHealth += item.MaxHealth
 	case Weapon:
-		c.Weapon = item // допилить добавление у бавление статов
+		if c.Weapon_hand {
+			c.Strength -= c.Weapon.Strength
+		} else {
+			c.Weapon_hand = true
+		}
+		c.Weapon = item
+		c.Strength += c.Weapon.Strength
 	}
 }
 
+func (c *Character) RemovePotion(item *Item){
+	time.Sleep(60 * time.Second)
+
+	c.Agility -= item.Agility
+	c.Strength -= item.Strength
+	c.MaxHealth -= item.MaxHealth
+	if item.MaxHealth >0 {
+		if c.Health - item.MaxHealth <=0{
+			c.Health = 1
+		} else {
+			c.Health -= item.MaxHealth
+		}
+	}
+}
 func NewItem(name ItemType, subtype string, health, maxhealth, agility, strength, cost, x,y int) *Item{
 	return &Item{
 		Type: name, 
@@ -70,7 +96,7 @@ func GenerateItem(level *Level, current_level int) []*Item{
 
 	gen_item := rand.Intn(7)+3
 
-	items := make([]*Item, gen_item)
+	items := make([]*Item, gen_item) // -1
 
 	itemsTypes := []*Item{
 		NewItem(Weapon, "SuperSword", 0, 0, 0, 5+5*(current_level/5), 0, 0, 0),

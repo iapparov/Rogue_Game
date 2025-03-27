@@ -16,6 +16,7 @@ const (
 type Level struct {
 	Rooms     []*Room
 	Items []*Item
+	// Enemies		[]*Enemy
 	Corridors []*Corridor
 	StartRoom *Room
 	EndRoom   *Room

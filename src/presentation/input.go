@@ -36,8 +36,9 @@ func HandleInput(r *Renderer, session *domain.GameSession, player *domain.Charac
 		case 'h', 'j', 'k', 'e': //оружие
 			r.backpack = true
 			r.BackPack(player)
-			flg := player.UseH(string(rune(ch)), string(rune(r.window.GetChar())))  // Передаем символ в функцию
-			r.TakeSomething(flg, "Can't use it")
+			flg := player.UseH(string(rune(ch)), string(rune(r.window.GetChar())), level)  // Передаем символ в функцию
+			r.TakeSomething(flg, "")
+			r.backpack = false
 		case goncurses.KEY_ENTER, '\n':
 			if player.NextLevel(level){
 				session.NextLevel()

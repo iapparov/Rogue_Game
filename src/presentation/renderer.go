@@ -1,25 +1,26 @@
 package presentation
 
 import (
-	"github.com/rthornton128/goncurses"
 	"rogue/domain"
+
+	"github.com/rthornton128/goncurses"
 )
 
 // Символы для рендеринга
 const (
-	WallChar      = '#'
-	FloorChar     = '.'
-	CorridorChar  = '+'
-	PlayerChar    = '@'
-	EnemyChar     = 'E'
-	ItemChar      = '*'
-	UnknownChar   = ' ' // Туман войны
-	DoorChar = 'D'
+	WallChar     = '|'
+	FloorChar    = '.'
+	CorridorChar = '+'
+	PlayerChar   = '@'
+	EnemyChar    = 'E'
+	ItemChar     = '*'
+	UnknownChar  = ' ' // Туман войны
+	DoorChar     = 'D'
 )
 
 // Renderer отвечает за отрисовку игрового мира
 type Renderer struct {
-	window *goncurses.Window
+	window   *goncurses.Window
 	messages []string // Буфер сообщений
 	backpack bool
 }
@@ -71,7 +72,7 @@ func (r *Renderer) Render(session *domain.GameSession, level *domain.Level, play
 					r.window.MovePrint(y, x, string(UnknownChar))
 				} else {
 					r.window.MovePrint(y, x, string(FloorChar))
-					if room == level.EndRoom{
+					if room == level.EndRoom {
 						r.window.MovePrint(level.EndRoom.DoorY, level.EndRoom.DoorX, string(DoorChar))
 					}
 				}
@@ -79,9 +80,6 @@ func (r *Renderer) Render(session *domain.GameSession, level *domain.Level, play
 		}
 	}
 
-
-
-	
 	// Отрисовываем персонажа
 	r.window.MovePrint(player.Y, player.X, string(PlayerChar))
 
@@ -103,11 +101,11 @@ func (r *Renderer) Render(session *domain.GameSession, level *domain.Level, play
 
 	// Прописываем статы
 
-	r.window.MovePrint(30,0, "MaxHealth: ", player.MaxHealth)
-	r.window.MovePrint(31,0, "Health: ", player.Health)
-	r.window.MovePrint(32,0, "Agility: ", player.Agility)
-	r.window.MovePrint(33,0, "Strength: ", player.Strength)
-
+	r.window.MovePrint(30, 0, "MaxHealth: ", player.MaxHealth)
+	r.window.MovePrint(31, 0, "Health: ", player.Health)
+	r.window.MovePrint(32, 0, "Agility: ", player.Agility)
+	r.window.MovePrint(33, 0, "Strength: ", player.Strength)
+	r.window.MovePrint(34, 0, "Curren Level: ", session.CurrentLevel+1)
 
 	// Вывод последних сообщений
 	startY := 35
@@ -123,7 +121,7 @@ func (r *Renderer) Render(session *domain.GameSession, level *domain.Level, play
 	r.window.Refresh()
 }
 
-func (r *Renderer) GameOver(){
+func (r *Renderer) GameOver() {
 	goncurses.End()
 }
 
@@ -146,13 +144,16 @@ func (r *Renderer) TakeSomething(flag int, message domain.ItemType) {
 		msg = "Backpack is full. Can't take " + string(message)
 		r.AddMessage(msg)
 	case -2:
-		r.AddMessage(msg)
+		r.AddMessage("Can't use it")
 	}
 }
 
-func (r *Renderer) BackPack(player *domain.Character){
+func (r *Renderer) BackPack(player *domain.Character) {
 	backpack := player.Backpack
-	for i, item := range backpack{
-		r.window.MovePrint(0+i, 50, (i+1), ") ", item.Subtype, "(", "Ag +", item.Agility, " He+", item.Health, " MaxHe+", item.MaxHealth, " Str+", item.Strength, ")")
+	for i, item := range backpack {
+		r.window.MovePrint(1+i, 50, (i + 1), ") ", item.Subtype, "(", "Ag +", item.Agility, " He+", item.Health, " MaxHe+", item.MaxHealth, " Str+", item.Strength, ")")
+	}
+	if player.Weapon_hand {
+		r.window.MovePrint(0, 50, 0, ") ", player.Weapon.Subtype, "(Str +", player.Weapon.Strength, ")")
 	}
 }
