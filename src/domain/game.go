@@ -2,11 +2,11 @@ package domain
 
 // GameSession управляет состоянием игры
 type GameSession struct {
-	CurrentLevel  int
-	Player        *Character
-	Levels        []*Level
-	GameOver      bool
-	TreasureCount int
+	CurrentLevel  int        `json:"CurrentLevel"`
+	Player        *Character `json:"Player"`
+	Levels        []*Level   `json:"Levels"`
+	GameOver      bool       `json:"GameOver"`
+	TreasureCount int        `json:"TreasureCount"`
 }
 
 // NewGameSession создаёт новую игру
@@ -23,8 +23,8 @@ func NewGameSession() *GameSession {
 		session.Levels[i] = GenerateLevel(i + 1)
 	}
 
-	session.Player.X = session.Levels[0].StartRoom.X+1
-	session.Player.Y = session.Levels[0].StartRoom.Y+1
+	session.Player.X = session.Levels[0].StartRoom.X + 1
+	session.Player.Y = session.Levels[0].StartRoom.Y + 1
 
 	return session
 }
@@ -34,12 +34,11 @@ func (g *GameSession) NextLevel() {
 	if g.CurrentLevel < 21 {
 		g.CurrentLevel++
 	}
-	g.Player.X = g.Levels[g.CurrentLevel].StartRoom.X+1
-	g.Player.Y = g.Levels[g.CurrentLevel].StartRoom.Y+1
+	g.Player.X = g.Levels[g.CurrentLevel].StartRoom.X + 1
+	g.Player.Y = g.Levels[g.CurrentLevel].StartRoom.Y + 1
 }
 
 // EndGame завершает игру
 func (g *GameSession) EndGame() {
 	g.GameOver = true
 }
-

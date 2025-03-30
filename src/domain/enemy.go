@@ -11,10 +11,11 @@ const (
 )
 
 type Enemy struct {
-	Character
-	Type      EnemyType
-	Hostility int //враждебность
-	X, Y      int
+	Character `json:"Character"`
+	Type      EnemyType `json:"Type"`
+	Hostility int       `json:"Hostility"` //враждебность
+	X         int       `json:"X"`
+	Y         int       `json:"Y"`
 }
 
 // NewEnemy создаёт нового врага

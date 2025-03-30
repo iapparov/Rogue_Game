@@ -1,18 +1,21 @@
 package domain
 
-import "strconv"
+import (
+	"strconv"
+)
 
 type Character struct {
-	Name          string
-	X, Y          int
-	MaxHealth     int
-	Health        int
-	Agility       int
-	Strength      int
-	Weapon        *Item
-	Weapon_hand   bool
-	Backpack      []*Item
-	TreasureCount int
+	Name          string  `json:"name"`
+	X             int     `json:"x"`
+	Y             int     `json:"y"`
+	MaxHealth     int     `json:"maxhelath"`
+	Health        int     `json:"health"`
+	Agility       int     `json:"agility"`
+	Strength      int     `json:"Strength"`
+	Weapon        *Item   `json:"Weapon,omitempty"`
+	Weapon_hand   bool    `json:"Weapon_hand"`
+	Backpack      []*Item `json:"Backpack"`
+	TreasureCount int     `json:"TreasureCount"`
 }
 
 // NewCharacter создаёт персонажа

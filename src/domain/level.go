@@ -15,33 +15,36 @@ const (
 
 // Level представляет уровень игры
 type Level struct {
-	Rooms     []*Room
-	Items     []*Item
-	Enemies   []*Enemy
-	Corridors []*Corridor
-	StartRoom *Room
-	EndRoom   *Room
-	Fog_corr  map[Point]bool
+	Rooms     []*Room        `json:"Rooms"`
+	Items     []*Item        `json:"Items"`
+	Enemies   []*Enemy       `json:"Enemies"`
+	Corridors []*Corridor    `json:"Corridors"`
+	StartRoom *Room          `json:"StartRoom"`
+	EndRoom   *Room          `json:"EndRoom"`
+	Fog_corr  map[Point]bool `json:"Fog_corr"`
 }
 
 // Room представляет комнату
 type Room struct {
-	X, Y         int // Верхний левый угол
-	Width        int
-	Height       int
-	Walls        []Point // Координаты стен комнаты
-	Connected    []*Room // Связанные комнаты
-	DoorX, DoorY int
+	X         int     `json:"X"`
+	Y         int     `json:"Y"` // Верхний левый угол
+	Width     int     `json:"Width"`
+	Height    int     `json:"Height"`
+	Walls     []Point `json:"Walls"`     // Координаты стен комнаты
+	Connected []*Room `json:"Connected"` // Связанные комнаты
+	DoorX     int     `json:"DoorX"`
+	DoorY     int     `json:"DoorY"`
 }
 
 // Corridor соединяет две комнаты
 type Corridor struct {
-	Path []Point
+	Path []Point `json:"Path"`
 }
 
 // Point - координаты клетки
 type Point struct {
-	X, Y int
+	X int `json:"X"`
+	Y int `json:"Y"`
 }
 
 // GenerateLevel создаёт случайный уровень

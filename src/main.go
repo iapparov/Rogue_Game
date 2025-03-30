@@ -1,6 +1,7 @@
 package main
 
 import (
+	"rogue/datalayer"
 	"rogue/domain"
 	"rogue/presentation"
 	"time"
@@ -31,6 +32,7 @@ func main() {
 			renderer.GameOver()
 			break
 		}
-		
+
+		datalayer.Json_Save(session)
 	}
 }
