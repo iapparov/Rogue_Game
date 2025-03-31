@@ -9,9 +9,18 @@ type GameSession struct {
 	TreasureCount int        `json:"TreasureCount"`
 }
 
+type LeaderBoards struct{
+	Record []*Records `json:"Records"`
+}
+
+type Records struct{
+	Name string `json:"Name"`
+	Record int `json:"Record"`
+}
+
 // NewGameSession создаёт новую игру
-func NewGameSession() *GameSession {
-	player := NewCharacter("Hero", 100, 10, 5, 0, 0)
+func NewGameSession(name string) *GameSession {
+	player := NewCharacter(name, 100, 10, 5, 0, 0)
 	session := &GameSession{
 		CurrentLevel: 0,
 		Player:       player,
@@ -42,3 +51,4 @@ func (g *GameSession) NextLevel() {
 func (g *GameSession) EndGame() {
 	g.GameOver = true
 }
+

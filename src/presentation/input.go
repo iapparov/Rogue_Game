@@ -62,7 +62,9 @@ func HandleInput(r *Renderer, session *domain.GameSession, player *domain.Charac
 		}
 
 	case goncurses.KEY_ENTER, '\n':
-		if player.NextLevel(level) {
+		if player.NextLevel(level) && session.CurrentLevel == 21{
+			session.EndGame()
+		} else if player.NextLevel(level) {
 			session.NextLevel()
 		}
 	}

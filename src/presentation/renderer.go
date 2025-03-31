@@ -130,7 +130,7 @@ func (r *Renderer) GameOver() {
 func (r *Renderer) AddMessage(msg string) {
 	// Ограничиваем количество сообщений (например, 3)
 	if len(r.messages) >= 3 {
-		r.messages = r.messages[1:] // Удаляем самое старое сообщение
+		r.messages = r.messages[(len(r.messages)-3):] // Удаляем самое старое сообщение
 	}
 	r.messages = append(r.messages, msg)
 }

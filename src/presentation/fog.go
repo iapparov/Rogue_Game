@@ -5,7 +5,7 @@ import (
 	"math")
 
 // ComputeFogOfWar рассчитывает видимость
-func ComputeFogOfWar(player *domain.Character, level *domain.Level, fog_corr *map[domain.Point]bool) map[domain.Point]bool {
+func ComputeFogOfWar(player *domain.Character, level *domain.Level, fog_corr *map[string]bool) map[domain.Point]bool {
 	fog := make(map[domain.Point]bool)
 
 	for _, room := range level.Rooms {
@@ -19,7 +19,8 @@ func ComputeFogOfWar(player *domain.Character, level *domain.Level, fog_corr *ma
 
 	for _, corridor := range level.Corridors {
 		for _, point := range corridor.Path {
-			if !(*fog_corr)[domain.Point{X: point.X, Y: point.Y}]{
+			s:=domain.Point{X: point.X, Y: point.Y}.String()
+			if !(*fog_corr)[s]{
 				fog[point] = true
 			}
 		}
@@ -43,7 +44,8 @@ func ComputeFogOfWar(player *domain.Character, level *domain.Level, fog_corr *ma
 		for _, point := range corridor.Path {
 			if math.Abs(float64(player.X-point.X)) < 3 && math.Abs(float64(player.Y-point.Y)) < 3 {
 				fog[point] = false
-				(*fog_corr)[domain.Point{X: point.X, Y: point.Y}] = true
+				s:=domain.Point{X: point.X, Y: point.Y}.String()
+				(*fog_corr)[s] = true
 			}
 		}
 	}
@@ -51,14 +53,16 @@ func ComputeFogOfWar(player *domain.Character, level *domain.Level, fog_corr *ma
 	for _, room := range level.Rooms {
 		for _, wall := range room.Walls {
 			if !fog[wall]{
-				(*fog_corr)[domain.Point{X: wall.X, Y: wall.Y}] = true
+				s:=domain.Point{X: wall.X, Y: wall.Y}.String()
+				(*fog_corr)[s] = true
 			}
 		}
 	}
 
 	for _, room := range level.Rooms {
 		for _, wall := range room.Walls {
-			if (*fog_corr)[domain.Point{X: wall.X, Y: wall.Y}]{
+			s:=domain.Point{X: wall.X, Y: wall.Y}.String()
+			if (*fog_corr)[s]{
 				fog[wall] = false
 			}
 		}
@@ -66,3 +70,4 @@ func ComputeFogOfWar(player *domain.Character, level *domain.Level, fog_corr *ma
 
 	return fog
 }
+

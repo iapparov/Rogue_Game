@@ -21,7 +21,7 @@ type Level struct {
 	Corridors []*Corridor    `json:"Corridors"`
 	StartRoom *Room          `json:"StartRoom"`
 	EndRoom   *Room          `json:"EndRoom"`
-	Fog_corr  map[Point]bool `json:"Fog_corr"`
+	Fog_corr  map[string]bool `json:"Fog_corr"`
 }
 
 // Room представляет комнату
@@ -50,7 +50,7 @@ type Point struct {
 // GenerateLevel создаёт случайный уровень
 func GenerateLevel(depth int) *Level {
 	level := &Level{}
-	level.Fog_corr = make(map[Point]bool)
+	level.Fog_corr = make(map[string]bool)
 	sections := divideIntoSections(LevelWidth, LevelHeight)
 
 	// 1. Генерируем комнаты в секциях
@@ -77,7 +77,13 @@ func GenerateLevel(depth int) *Level {
 	// 5. Генерируем предметы в каждой комнате
 	level.Items = GenerateItem(level, depth)
 	level.SpawnEnemies()
+
+	// 6. Разрываем циклические ссылки
+	visited:=make(map[*Room]bool)
+	RemoveCycles(level.Rooms, visited)
+	
 	return level
+
 }
 
 // Разбивает уровень на 9 секций
@@ -214,7 +220,7 @@ func (l *Level) SpawnEnemies() {
 		room := l.Rooms[i]
 		x := room.X + 1 + rand.Intn(room.Width-2)
 		y := room.Y + 1 + rand.Intn(room.Height-2)
-
+		
 		enemyType := getRandomEnemyType()
 		enemy := NewEnemy(enemyType)
 		enemy.X, enemy.Y = x, y
@@ -274,4 +280,30 @@ func EnemiesAttack(player *Character, enemies []*Enemy, messages *[]string) {
 // isAdjacent проверяет, находится ли игрок рядом с врагом (по клеткам)
 func isAdjacent(x1, y1, x2, y2 int) bool {
 	return abs(x1-x2) <= 1 && abs(y1-y2) <= 1
+}
+
+func (p Point) String() string {
+	return fmt.Sprintf("%d,%d", p.X, p.Y)
+}
+
+// FromString — создаёт Point из строки (например, "10,5")
+func FromString(s string) (Point, error) {
+	var p Point
+	_, err := fmt.Sscanf(s, "%d,%d", &p.X, &p.Y)
+	return p, err
+}
+
+func RemoveCycles(rooms []*Room, visited map[*Room]bool) {
+	for _, room := range rooms {
+		if visited[room] {
+			continue
+		}
+		visited[room] = true
+
+		for i := range room.Connected {
+			if visited[room.Connected[i]] {
+				room.Connected[i] = nil // Разрываем цикл
+			}
+		}
+	}
 }
